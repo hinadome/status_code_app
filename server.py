@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, abort, make_response
+from flask import render_template, abort, make_response, redirect, url_for
 from flask import request, Response
 
 application = Flask(__name__)
@@ -12,7 +12,8 @@ def return_100():
 @application.route('/')
 def return_200():
     print_request_info()
-    return make_response('hello',200)
+    content = render_template('index.html')
+    return make_response(content,200)
 
 @application.route('/201')
 def return_201():
@@ -53,17 +54,17 @@ def return_300():
 @application.route('/301')
 def return_301():
     print_request_info()
-    return render_template('empty.html'),301
+    return redirect(url_for('return_200'),301)
 
 @application.route('/302')
 def return_302():
     print_request_info()
-    return render_template('empty.html'),302
+    return redirect(url_for('return_200'),302)
 
 @application.route('/303')
 def return_303():
     print_request_info()
-    return render_template('empty.html'),303
+    return redirect(url_for('return_200'),303)
 
 @application.route('/304')
 def return_304():
@@ -73,17 +74,17 @@ def return_304():
 @application.route('/305')
 def return_305():
     print_request_info()
-    return render_template('empty.html'),305
+    return redirect(url_for('return_200'),305)
 
 @application.route('/307')
 def return_307():
     print_request_info()
-    return render_template('empty.html'),307
+    return redirect(url_for('return_200'),307)
 
 @application.route('/308')
 def return_308():
     print_request_info()
-    return render_template('empty.html'),308
+    return redirect(url_for('return_200'),308)
 
 @application.route('/400')
 def return_400():
@@ -197,6 +198,10 @@ def return_505():
 
 def print_request_info():
     print(request.headers)
+
+@application.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'),404
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0')

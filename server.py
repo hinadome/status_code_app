@@ -2,7 +2,24 @@ from flask import Flask
 from flask import render_template, abort, make_response, redirect, url_for
 from flask import request, Response
 
+from logging import DEBUG
+
 application = Flask(__name__)
+application.logger.setLevel(DEBUG)
+
+bookmarks = []
+
+def store_bookmark(url):
+    bookmarks.append( {'url':url })
+
+@application.route('/add',methods=['GET','POST'])
+def add():
+    if request.method == 'POST':
+        url = request.form['url']
+        store_bookmark(url)
+        application.logger.debug('URL:' + url )
+        return redirect(url_for('return_200'))
+    return render_template('add.html')
 
 @application.route('/100')
 def return_100():
@@ -13,6 +30,7 @@ def return_100():
 def return_200():
     print_request_info()
     content = render_template('index.html')
+    application.logger.debug('content:' + content) 
     return make_response(content,200)
 
 @application.route('/201')

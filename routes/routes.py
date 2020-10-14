@@ -1,6 +1,6 @@
-from flask import render_template, abort, make_response, redirect, url_for
+from flask import render_template, abort, make_response, redirect, url_for, flash
 from flask import request, Response
-
+from forms import BookmarkForm
 bookmarks = []
 
 def store_bookmark(url):
@@ -10,12 +10,14 @@ def define_routes(application):
 
     @application.route('/add',methods=['GET','POST'])
     def add():
-        if request.method == 'POST':
+        form = BookmarkForm()
+        if form.validate_on_submit():
             url = request.form['url']
             store_bookmark(url)
-            application.logger.debug('URL:' + url )
+            application.logger.debug('URL:' + url)
+            flash("Stored url: {}".format(url))
             return redirect(url_for('return_200'))
-        return render_template('add.html')
+        return render_template('add.html',form=form)
 
     @application.route('/100')
     def return_100():
@@ -26,7 +28,7 @@ def define_routes(application):
     def return_200():
         print_request_info()
         content = render_template('index.html')
-        application.logger.debug('content:' + content) 
+        #application.logger.debug('content:' + content) 
         return make_response(content,200)
 
     @application.route('/201')
@@ -209,10 +211,12 @@ def define_routes(application):
         print_request_info()
         abort(505)
 
-    def print_request_info():
-        print(request.headers)
-
     @application.errorhandler(404)
     def page_not_found(e):
         return render_template('404.html'),404
+
+    def print_request_info():
+        #request.form, request.args,request.cookies,request.headers,request.files,request.method
+        print(request.headers)
+
 

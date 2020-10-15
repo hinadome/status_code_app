@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+    <articl>
+        <header>
+            <h1>Book marks for {{ user.username }}</h1>
+            <ul>
+                {% for bm in user.bookmarks %}
+                    <li>
+                        <a href="{{ bm.url }}">{{ bm.url }}</a>
+                        <span class="timestamp">Added at {{ bm.data }}<span>
+                    </li>
+                {% else %}
+                    <li>This user has not added any bookmarks yet.</li>
+                {% endfor %}
+            </ul>
+         </header>
+     </article>
+{% endblock %}
